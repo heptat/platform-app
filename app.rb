@@ -45,3 +45,12 @@ get '/' do
   erb :index
 end
 
+get '/books' do
+  # TODO protect with auth
+  erb :'books/index'
+end
+
+get '/session/new' do
+  erb :'session/new'
+end
+
