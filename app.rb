@@ -45,9 +45,15 @@ get '/' do
   erb :index
 end
 
-get '/books' do
-  # TODO protect with auth
-  erb :'books/index'
+['/books', '/books/index'].each do |path|
+  get path do
+    # TODO protect with auth - detect and check the token
+    @token = request.cookies["token"]
+    if @token.nil?
+      redirect '/'
+    end
+    erb :'books/index'
+  end
 end
 
 get '/session/new' do
