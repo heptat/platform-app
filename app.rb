@@ -26,7 +26,7 @@ configure :production do
 end
 set :mongo_logfile, File.join("log", "mongo-driver-#{settings.environment}.log")
 
-# the session should be written to the db
+# TODO the session should be written to the db
 use Rack::Session::Cookie, :secret => 'thisisasecret'
 use Rack::Flash
 
@@ -74,5 +74,16 @@ get '/session/new' do
   end
 
   erb :'session/new'
+end
+
+# TODO not exactly RESTful
+get '/session/destroy' do
+  # TODO also need to tell auth to invalidate the token
+  response.set_cookie("token",
+                      :domain => ".platform.local",
+                      :path => "/",
+                      :expires => Time.now )
+  session[:uid] = nil
+  redirect '/'
 end
 
