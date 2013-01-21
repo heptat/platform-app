@@ -1,5 +1,10 @@
 <h1>Login</h1>
 
+<% unless @error.nil? %>
+  <%= @error %>
+  <br/>
+<% end %>
+
 <form action="http://auth.platform.local/tokens/new" method="POST">
 
   <input type="hidden" name="callback" value="http://app.platform.local/books" />
