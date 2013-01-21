@@ -26,6 +26,7 @@ configure :production do
 end
 set :mongo_logfile, File.join("log", "mongo-driver-#{settings.environment}.log")
 
+# the session should be written to the db
 use Rack::Session::Cookie, :secret => 'thisisasecret'
 use Rack::Flash
 
@@ -47,10 +48,17 @@ end
 
 ['/collections', '/collections/index'].each do |path|
   get path do
-    # TODO protect with auth - detect and check the token
-    @token = request.cookies["token"]
-    if @token.nil? || !token_genuine?(@token)
-      redirect '/'
+    if session[:uid].nil?
+      token_value = request.cookies["token"]
+      if token_value.nil?
+        redirect '/'
+      end
+      @token = verify_token(token_value)
+      if @token[:value] == false
+        redirect '/'
+      end
+      # token is genuine so set session:
+      session[:uid] = @token["uid"]
     end
     erb :'collections/index'
   end
