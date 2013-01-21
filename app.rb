@@ -57,6 +57,14 @@ end
 end
 
 get '/session/new' do
+  unless request.cookies["error"].nil?
+    @error = request.cookies["error"]
+    response.set_cookie("error",
+                        :domain => ".platform.local",
+                        :path => "/",
+                        :expires => Time.now )
+  end
+
   erb :'session/new'
 end
 
