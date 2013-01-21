@@ -7,7 +7,7 @@ require 'rack-flash'
 require 'digest/sha1'
 require 'sinatra/reloader' if :development?
 
-# require_relative 'lib/helpers'
+require_relative 'lib/helpers'
 # Dir[File.dirname(__FILE__) + '/models/*'].each {|file| require_relative file }
 
 Mongoid.load!("config/mongoid.yml")
@@ -45,14 +45,14 @@ get '/' do
   erb :index
 end
 
-['/books', '/books/index'].each do |path|
+['/collections', '/collections/index'].each do |path|
   get path do
     # TODO protect with auth - detect and check the token
     @token = request.cookies["token"]
-    if @token.nil?
+    if @token.nil? || !token_genuine?(@token)
       redirect '/'
     end
-    erb :'books/index'
+    erb :'collections/index'
   end
 end
 
