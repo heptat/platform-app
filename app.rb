@@ -78,7 +78,10 @@ end
 
 # TODO not exactly RESTful
 get '/session/destroy' do
-  # TODO also need to tell auth to invalidate the token
+  invalidate = invalidate_token(request.cookies["token"])
+  # TODO if it fails to invalidate then the token is still active on the auth
+  # server...these tokens should have a server-side timeout anyway
+  logger.info(invalidate)
   response.set_cookie("token",
                       :domain => ".platform.local",
                       :path => "/",

@@ -10,12 +10,23 @@ helpers do
     # private key so that the matching public key on auth can verify it
     app_key = "5555"
 
-    url = URI.parse("http://auth.platform.local/tokens/#{token_value}?app-key=#{app_key}")
-    req = Net::HTTP::Get.new(url.to_s)
-    res = Net::HTTP.start(url.host, url.port) {|http|
-      http.request(req)
+    uri = URI.parse("http://auth.platform.local/tokens/#{token_value}?app-key=#{app_key}")
+    request = Net::HTTP::Get.new(uri.to_s)
+    response = Net::HTTP.start(uri.host, uri.port) {|http|
+      http.request(request)
     }
-    JSON.parse(res.body)
+    JSON.parse(response.body)
+  end
+
+  def invalidate_token(token_value)
+    app_key = "5555"
+
+    uri = URI.parse("http://auth.platform.local/tokens/#{token_value}?app-key=#{app_key}")
+    request = Net::HTTP::Delete.new(uri.to_s)
+    response = Net::HTTP.start(uri.host, uri.port) {|http|
+      http.request(request)
+    }
+    JSON.parse(response.body)
   end
 
 end
