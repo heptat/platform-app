@@ -92,21 +92,20 @@ get '/session/destroy' do
                       :domain => ".platform.local",
                       :path => "/",
                       :expires => Time.now )
+  # this is not strictly necessary but it does clean up the cookies:
   response.set_cookie("content.session",
                       :domain => ".platform.local",
                       :path => "/",
                       :expires => Time.now )
   session[:uid] = nil
 
-  # TODO this method on content currently doesn't do anything - the logout from
-  # content is effected by destroying the domain wide cookie above
-  # uri = URI.parse("http://content.platform.local/session/destroy")
-  # request = Net::HTTP::Get.new(uri.to_s)
-  # response = Net::HTTP.start(uri.host, uri.port) {|http|
-  #   http.request(request)
-  # }
-  # response = JSON.parse(response.body)
-  # logger.info(response)
+  uri = URI.parse("http://content.platform.local/session/destroy")
+  request = Net::HTTP::Get.new(uri.to_s)
+  response = Net::HTTP.start(uri.host, uri.port) {|http|
+    http.request(request)
+  }
+  response = JSON.parse(response.body)
+  logger.info(response)
 
   redirect '/'
 end
