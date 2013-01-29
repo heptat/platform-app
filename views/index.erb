@@ -1,3 +1,7 @@
 <h1>Home</h1>
 
-<a href="/session/new">login</a>
+<% if @current_user %>
+  <a href="/session/destroy">logout</a>
+<% else %>
+  <a href="/session/new">login</a>
+<% end %>

@@ -8,7 +8,7 @@ require 'digest/sha1'
 require 'sinatra/reloader' if :development?
 
 require_relative 'lib/helpers'
-# Dir[File.dirname(__FILE__) + '/models/*'].each {|file| require_relative file }
+Dir[File.dirname(__FILE__) + '/models/*'].each {|file| require_relative file }
 
 Mongoid.load!("config/mongoid.yml")
 
@@ -43,6 +43,9 @@ configure :production, :test do
 end
 
 get '/' do
+  unless session[:uid].nil?
+    @current_user = User.where(:uid => session[:uid]).first
+  end
   erb :index
 end
 
@@ -60,6 +63,8 @@ end
       # token is genuine so set session:
       session[:uid] = @token["uid"]
     end
+    @current_user = User.where(:uid => session[:uid]).first
+    @collections = Collection.where(:uid.in => @current_user.collections)
     erb :'collections/index'
   end
 end

@@ -2,6 +2,12 @@
 
 A list of collections.
 <br/><br/>
+<% unless @collections.nil? %>
+  <% @collections.each do |c| %>
+    <a href="http://content.platform.local/collections/<%= c.uid %>"><%= c.name %></a><br/>
+  <% end %>
+  <br/>
+<% end %>
 
 <a href="/session/destroy">logout</a>
 <br/>
