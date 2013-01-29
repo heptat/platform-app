@@ -83,15 +83,31 @@ end
 
 # TODO not exactly RESTful
 get '/session/destroy' do
+  redirect '/' if session[:uid].nil?
+
   invalidate = invalidate_token(request.cookies["token"])
   # TODO if it fails to invalidate then the token is still active on the auth
   # server...these tokens should have a server-side timeout anyway
-  logger.info(invalidate)
   response.set_cookie("token",
                       :domain => ".platform.local",
                       :path => "/",
                       :expires => Time.now )
+  response.set_cookie("content.session",
+                      :domain => ".platform.local",
+                      :path => "/",
+                      :expires => Time.now )
   session[:uid] = nil
+
+  # TODO this method on content currently doesn't do anything - the logout from
+  # content is effected by destroying the domain wide cookie above
+  # uri = URI.parse("http://content.platform.local/session/destroy")
+  # request = Net::HTTP::Get.new(uri.to_s)
+  # response = Net::HTTP.start(uri.host, uri.port) {|http|
+  #   http.request(request)
+  # }
+  # response = JSON.parse(response.body)
+  # logger.info(response)
+
   redirect '/'
 end
 
